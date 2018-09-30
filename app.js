@@ -42,9 +42,10 @@ $('#add-train-btn').on('click', function(event) {
     $('#rate-input').val("");
 });
 
-database.ref().once("child_added", function(childSnapshot){
+database.ref().on("child_added", function(childSnapshot){
+    console.log(childSnapshot.val());
     var trainTitle = childSnapshot.val().name;
-    var trainDest = childSnapshot.val().destination;
+    var trainDest = childSnapshot.val().dest;
     var trainStart = childSnapshot.val().start;
     var trainFreq = childSnapshot.val().frequency;
 
@@ -54,18 +55,30 @@ database.ref().once("child_added", function(childSnapshot){
     console.log(trainFreq);
     
 
-    var trainStarter = moment.unix(trainStart).format("MM/DD/YYYY");
+    var trainStarter = moment(trainStart, "hh:mm").subtract(1, "years");
+    console.log(trainStarter);
 
-    var trainArrival = moment().diff(moment(trainStart, "X"), "minutes");
+    var currentTime = moment();
+    console.log(currentTime);
+
+    var trainArrival = moment().diff(moment(trainStarter), "minutes");
     console.log(trainArrival);
+
+    var reMain = trainArrival % trainFreq;
+    console.log(reMain);
+
+    var trainComing = trainFreq - reMain;
+
+    var nextTrain = moment().add(trainComing, "minutes").format("hh:mm");
+
+
 
     var newRow = $('<tr>').append(
         $('<td>').text(trainTitle),
         $('<td>').text(trainDest),
-        $('<td>').text(trainStart),
-        $('<td>').text(trainFreq),
-        $('<td>').text(trainStarter),
-        $('<td>').text(trainArrival),
+        $('<td>').text(nextTrain),
+        $('<td>').text(trainFreq + " mins"),
+        $('<td>').text(reMain),
     );
 
     $("#train-table > tbody").append(newRow);
