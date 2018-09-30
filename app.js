@@ -26,12 +26,13 @@ $('#add-train-btn').on('click', function(event) {
         frequency: rateTer,
     };
 
-    database.ref().push(newEmp);
+    database.ref().push(newTrain);
 
     console.log(newTrain.name);
     console.log(newTrain.dest);
     console.log(newTrain.start);
     console.log(newTrain.frequency);
+    
 
     alert("Train succesfully added");
 
@@ -41,7 +42,7 @@ $('#add-train-btn').on('click', function(event) {
     $('#rate-input').val("");
 });
 
-database.red().on("child_added", function(childSnapshot){
+database.ref().once("child_added", function(childSnapshot){
     var trainTitle = childSnapshot.val().name;
     var trainDest = childSnapshot.val().destination;
     var trainStart = childSnapshot.val().start;
@@ -51,6 +52,7 @@ database.red().on("child_added", function(childSnapshot){
     console.log(trainTitle);
     console.log(trainStart);
     console.log(trainFreq);
+    
 
     var trainStarter = moment.unix(trainStart).format("MM/DD/YYYY");
 
@@ -58,7 +60,7 @@ database.red().on("child_added", function(childSnapshot){
     console.log(trainArrival);
 
     var newRow = $('<tr>').append(
-        $('<td>').text(trainName),
+        $('<td>').text(trainTitle),
         $('<td>').text(trainDest),
         $('<td>').text(trainStart),
         $('<td>').text(trainFreq),
